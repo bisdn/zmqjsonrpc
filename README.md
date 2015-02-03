@@ -1,7 +1,7 @@
 # zmqjsonrpc
 
 This gem implements a very simple [JSON RPC 2.0](http://www.jsonrpc.org/specification) client and server which uses zeroMQ for transport.
-Let's not talk to much, let's see some code:
+Let's not talk too much, let's see some code:
 
 ```ruby
   require 'rubygems'
@@ -57,5 +57,5 @@ This code is released under the terms of MIT License.
 
 ## Contribute
 
-Please do so! Just send a messahe or send a pull request.
+Please do so! Just send a message or send a pull request.
 Especially, adding webrick for transport would be nice.
