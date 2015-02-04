@@ -39,6 +39,7 @@ Let's not talk too much, let's see some code:
 
 ## Resources
 
+* [API reference documentation](http://www.rubydoc.info/github/bisdn/zmqjsonrpc/)
 * The [JSON RPC 2.0 Spec](http://www.jsonrpc.org/specification)
 * The used [ZeroMQ gem](https://github.com/chuckremes/ffi-rzmq) and [good examples](http://github.com/andrewvc/learn-ruby-zeromq)
 * [Gem making](http://guides.rubygems.org/make-your-own-gem/)
