@@ -10,6 +10,16 @@ Let's not talk too much, let's see some code:
   # client request to a running server
   client = ZmqJsonRpc::Client.new("tcp://127.0.0.1:49200")
   client.some_method(1, "b", [1,{a:1}])
+
+  # -or- a client with logger and error handling
+  require 'logger'
+  logger = Logger.new(STDOUT)
+  client = ZmqJsonRpc::Client.new("tcp://127.0.0.1:49200", 10000, loggger)
+  begin
+    client.faulty_method()
+  rescue ZmqJsonRpc::ClientError => e
+    puts "bad things can happen..."
+  end
 ```
 
 ```ruby
@@ -27,6 +37,13 @@ Let's not talk too much, let's see some code:
   proxy = Proxy.new()
   server = ZmqJsonRpc::Server.new(proxy, "tcp://*:49200")
   server.server_loop
+
+  # -or- a server with your own logger
+  require 'logger'
+  logger = Logger.new(STDOUT)
+  # ...
+  server = ZmqJsonRpc::Server.new(proxy, "tcp://*:49200", logger)
+
   
   # -or- dispatch a thread
   server = ZmqJsonRpc::Server.new(proxy, "tcp://*:49200")
@@ -52,7 +69,7 @@ Let's not talk too much, let's see some code:
 * Keep the client connection alive instead of re-establishing every time.
 * Add more tests.
 
-## Licence
+## License
 
 This code is released under the terms of MIT License.
 

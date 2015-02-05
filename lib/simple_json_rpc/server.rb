@@ -36,6 +36,7 @@ module ZmqJsonRpc
   
     def handle_request(request)
       begin
+        @logger.debug "zmqjsonrpc server received request: #{request}" unless @logger.nil?
         req_id = nil
         rpc = JSON.parse(request)
         raise "Received unsupprted jsonrpc version (#{rpc['jsonrpc']})" if rpc["jsonrpc"].strip != "2.0"
@@ -43,17 +44,18 @@ module ZmqJsonRpc
         method = rpc["method"]
         params = rpc["params"]
 
-        @logger.info "Received JSON RPC request: #{method}(#{params.collect {|p| p.inspect}.join(", ")})" unless @logger.nil?
+        @logger.debug "zmqjsonrpc server calls proxy method: #{method}(#{params.collect {|p| p.inspect}.join(", ")})" unless @logger.nil?
         result = @proxy.send(method.to_sym, *params)
         response = {
           id: rid,
           jsonrpc: "2.0",
           result: result
         }
+        @logger.debug "zmqjsonrpc server sends response: #{response.inspect})" unless @logger.nil?
         return response.to_json
       rescue => e
         # If there is more time to spare, we could implement the actual error codes here.
-        @logger.warn "Returning error for RPC request: #{e.message})" unless @logger.nil?
+        @logger.warn "zmqjsonrpc server caugth error during request handling: #{e.message.strip})" unless @logger.nil?
         response = {
           id: rid,
           jsonrpc: "2.0",
@@ -63,6 +65,7 @@ module ZmqJsonRpc
             data: e.backtrace.inspect
           }
         }
+        @logger.debug "zmqjsonrpc server sends response: #{response.inspect})" unless @logger.nil?
         return response.to_json
       end
     end
@@ -71,6 +74,7 @@ module ZmqJsonRpc
       @context = ZMQ::Context.new(1)
       @socket = @context.socket(ZMQ::REP)
       @socket.bind(@connect)
+      @logger.info "zmqjsonrpc server listens to #{@connect}" unless @logger.nil?
       begin
         loop do
           request = ''
@@ -79,6 +83,7 @@ module ZmqJsonRpc
           @socket.send_string(response)
         end
       ensure
+        @logger.info "zmqjsonrpc server shuts down" unless @logger.nil?
         @socket.close
         # @context.terminate
       end

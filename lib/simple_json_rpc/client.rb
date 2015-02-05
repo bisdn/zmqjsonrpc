@@ -14,9 +14,10 @@ module ZmqJsonRpc
   # The client does not keep the connection alive. For each request, a new connection is esablished and torn down after the response.
   # This could become a performance issue.
   class Client
-    def initialize(connect="tcp://127.0.0.1:49200", timeout=10000)
+    def initialize(connect="tcp://127.0.0.1:49200", timeout=10000, logger=nil)
       @connect = connect
       @timeout = timeout
+      @logger = logger
     end
 
     def send_rpc(method, params=[])
@@ -36,12 +37,14 @@ module ZmqJsonRpc
           method: method.to_s,
           params: params
         }        
+        @logger.debug "zmqjsonrpc client sends request: #{request.inspect})" unless @logger.nil?
         rc = @socket.send_string(request.to_json) # this will always succeed, even if the server is not reachable.
 
         # interpret response
         response = ''
         rc = @socket.recv_string(response)
         raise "Could talk to the server (server unreachable? time out?)" if rc < 0
+        @logger.debug "zmqjsonrpc client got response: #{response})" unless @logger.nil?
         resjson = JSON.parse(response)
         # check response
         raise "Response's id did not match the sent id" if resjson["id"] != req_id
