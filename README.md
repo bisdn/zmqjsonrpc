@@ -1,6 +1,8 @@
 # zmqjsonrpc [![Gem Version](https://img.shields.io/gem/v/zmqjsonrpc.svg)](https://rubygems.org/gems/zmqjsonrpc)
 
 This gem implements a very simple [JSON RPC 2.0](http://www.jsonrpc.org/specification) client and server which uses zeroMQ for transport.
+Please install `libzmq`, e.g. via `apt-get install libzmq3-dev`.
+
 Let's not talk too much, let's see some code:
 
 ```ruby
